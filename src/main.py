@@ -57,36 +57,38 @@ if __name__ == '__main__':
     logger.info("Loading entities descriptions")
     if args.type == 'job':
         jobs_desc = []
-        with open(args.output, 'a') as output_fp:
-            for entity in tqdm(entities):
-                entity = preprocess_entity(entity)
-                data = strategy.get_data(
-                    entity=entity,
-                    type=args.type,
-                    lang=args.lang
-                )
-                jobs_desc.append({
-                    'entity': entity,
-                    'description': data
-                })
+        for entity in tqdm(entities):
+            entity = preprocess_entity(entity)
+            data = strategy.get_data(
+                entity=entity,
+                type=args.type,
+                lang=args.lang
+            )
+            jobs_desc.append({
+                "entity": entity,
+                'description': data
+            })
+            logger.info(f"Saving {entity} description")
+            with open(args.output, 'a') as f:
+                f.write({'entity': entity,
+                         'description': data})
 
-            logger.info("Saving entities descriptions")
 
-            json.dump(jobs_desc, output_fp)
     else:
         # skills
         skills_desc = []
-        with open(args.output, "a") as output_fp:
-            for entity in tqdm(entities):
-                entity = preprocess_entity(entity)
-                data = strategy.get_data(
+        for entity in tqdm(entities):
+            entity = preprocess_entity(entity)
+            data = strategy.get_data(
                     entity=entity,
                     type=args.type,
                     lang=args.lang
                 )
-                skills_desc.append({
-                    "entity": entity,
-                    'description': data
-                })
-            logger.info("Saving entities descriptions")
-            json.dump(skills_desc, output_fp)
+            skills_desc.append({
+            "entity": entity,
+            'description': data
+            })
+            logger.info(f"Saving {entity} description")
+            with open(args.output, 'a') as f:
+                f.write({'entity': entity,
+                            'description': data})
