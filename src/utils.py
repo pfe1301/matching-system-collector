@@ -20,12 +20,18 @@ def construct_prompt(entity: str, type_: str, lang: str = 'en') -> str:
     prompt = ""
     if lang == 'en':
         if type_ == 'job':
-            prompt = f"Give a detailed description about this job {entity}, skills, tools,missions and tasks and pretty much every thing about it"
+            prompt = f"Give a detailed description about this job \"{entity}\", skills, tools,missions and tasks and pretty much every thing about it"
         else:
             # skill
-            prompt = f"Give a detailed description about this skill {entity}, jobs that could be used in and pretty much every thing about it"
+            prompt = f"Give a detailed description about this skill \"{entity}\", jobs that could be used in and pretty much every thing about it"
 
     # TODO: Add Fr language
+    elif lang == 'fr':
+        if type_ == 'job':
+            prompt = f"Donne une description détaillée de l'emploi \"{entity}\", des compétences, des outils, des missions et des tâches et de pratiquement tout ce qui s'y rapporte."
+        else:
+            # skill
+            prompt = f"Donnez une description détaillée de cette compétence \"{entity}\", des emplois dans lesquels elle peut être utilisée et d'à peu près tout ce qui s'y rapporte."
 
     return prompt
 
@@ -40,6 +46,7 @@ def preprocess_entity(entity: str) -> str:
         Returns:
             cleaned_entity (string): The preprocessed entity
     """
+    entity = entity.trim().strip()
     entity = re.sub("\n", "", entity)
     return entity
 

@@ -30,6 +30,7 @@ class WriteSonicStrategy(CollectionStrategy):
                 data (string): the text response of the api
         """
         super().get_data(input_text, *args, **kwargs)
+        print(input_text)
         payload = {
             "enable_google_results": google,
             "enable_memory": memory,
@@ -38,4 +39,8 @@ class WriteSonicStrategy(CollectionStrategy):
         response: Response = requests.post(
             endpoint, json=payload, headers=headers)
         response_data = json.loads(response.text)
-        return response_data['message']
+        print(response_data)
+        # try:
+        #     return response_data['message']
+        # except:
+        return ""
