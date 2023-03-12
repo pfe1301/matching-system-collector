@@ -21,6 +21,14 @@ headers = {
 class WriteSonicStrategy(CollectionStrategy):
 
     def get_data(self, input_text, *args, google=True, memory=False, **kwargs, ):
+        """
+            Implement `get_data` function responsible for data collection
+            Parameters:
+                input_text (string): the prompt to send to the API
+
+            Returns:
+                data (string): the text response of the api
+        """
         super().get_data(input_text, *args, **kwargs)
         payload = {
             "enable_google_results": google,
