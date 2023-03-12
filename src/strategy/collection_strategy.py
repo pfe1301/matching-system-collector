@@ -7,5 +7,5 @@ class CollectionStrategy(ABC):
     """
 
     @abstractmethod
-    def get_data(self, input_text: str, *args, **kwargs):
+    def get_data(self, entity:str, *args, **kwargs):
         pass

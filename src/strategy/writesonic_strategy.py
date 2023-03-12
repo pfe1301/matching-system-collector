@@ -1,3 +1,4 @@
+from strategy.utils import construct_prompt
 from .collection_strategy import CollectionStrategy
 import requests
 import json
@@ -20,7 +21,7 @@ headers = {
 
 class WriteSonicStrategy(CollectionStrategy):
 
-    def get_data(self, input_text, *args, google=True, memory=False, **kwargs, ):
+    def get_data(self, entity, *args, google=True, memory=False, **kwargs, ):
         """
             Implement `get_data` function responsible for data collection
             Parameters:
@@ -29,11 +30,16 @@ class WriteSonicStrategy(CollectionStrategy):
             Returns:
                 data (string): the text response of the api
         """
-        super().get_data(input_text, *args, **kwargs)
+        super().get_data(entity, *args, **kwargs)
+        prompt = construct_prompt(
+            entity=entity,
+            type_=kwargs.get('type', 'job'),
+            lang=kwargs.get('lang', 'en')
+        )
         payload = {
             "enable_google_results": google,
             "enable_memory": memory,
-            "input_text": input_text
+            "input_text": prompt
         }
         response: Response = requests.post(
             endpoint, json=payload, headers=headers)

@@ -4,7 +4,6 @@ from .writesonic_strategy import WriteSonicStrategy
 from .dbpedia_strategy import DBPediaStrategy
 from .exceptions.unknown_strategy import UnknownStrategyException
 
-
 __all__ = [
     'CollectionStrategy',
     'OpenaiStrategy',
