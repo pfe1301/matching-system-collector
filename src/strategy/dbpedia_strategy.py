@@ -2,7 +2,6 @@ from .collection_strategy import CollectionStrategy
 import requests
 from requests import Response
 from SPARQLWrapper import SPARQLWrapper, JSON
-import urllib.parse
 
 resource_lookup_endpoint = "https://lookup.dbpedia.org/api/search"
 headers = {"Accept": "application/json"}
