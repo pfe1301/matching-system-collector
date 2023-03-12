@@ -47,8 +47,7 @@ if __name__ == '__main__':
                         datefmt='%m/%d/%Y %H:%M:%S',
                         level=logging.INFO)
 
-    logger.info(
-        f"Collecting data using {args.strategy} strategy and in {args.lang} language")
+    logger.info(f"Collecting data using {args.strategy} strategy")
     strategy = build_strategy(args.strategy)
 
     logger.info(f"Loading {args.type} entities")
