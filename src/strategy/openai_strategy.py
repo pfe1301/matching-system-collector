@@ -31,13 +31,7 @@ class OpenaiStrategy(CollectionStrategy):
                 data (string): the text response of the api
         """
         super().get_data(input_text, *args, **kwargs)
-        try:
-            return self.make_request(prompt=input_text)
-        except:
-            # Sleep for one minute before making next call
-            # TODO: Retry until max_retries reached ?
-            time.sleep(6000)
-            return self.make_request(prompt=input_text)
+        return self.make_request(prompt=input_text)
 
     def make_request(self, prompt: str) -> str:
         """
@@ -51,12 +45,24 @@ class OpenaiStrategy(CollectionStrategy):
             Eventual features:
                 make request with custom configuration
         """
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=prompt,
-            max_tokens=1000,
-            n=1,
-            stop=None,
-            temperature=0.5,
-        )
-        return response.choices[0].text.strip()
+        try:
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=prompt,
+                max_tokens=1000,
+                n=1,
+                stop=None,
+                temperature=0.5,
+            )
+            return response.choices[0].text.strip()
+        except:
+            time.sleep(6000)
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=prompt,
+                max_tokens=1000,
+                n=1,
+                stop=None,
+                temperature=0.5,
+            )
+            return response.choices[0].text.strip()
