@@ -3,6 +3,7 @@ from strategy import (
     CollectionStrategy,
     WriteSonicStrategy,
     OpenaiStrategy,
+    DBPediaStrategy,
     UnknownStrategyException
 )
 
@@ -56,5 +57,7 @@ def build_strategy(strategy: str) -> CollectionStrategy:
         return OpenaiStrategy()
     elif (strategy == 'writesonic'):
         return WriteSonicStrategy()
+    elif (strategy == 'dbpedia'):
+        return DBPediaStrategy()
     else:
         raise UnknownStrategyException(f"Uknown strategy {strategy}")
