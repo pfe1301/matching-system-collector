@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 # from api import get_data
-from utils import construct_prompt, preprocess_entity, build_strategy
+from utils import preprocess_entity, build_strategy
 from tqdm.auto import tqdm
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         "-s",
         "--strategy",
         default="writesonic",
-        help="The strategy of data collection (date source)",
+        help="The strategy of data collection (data source)",
     )
 
     args = parser.parse_args()
@@ -60,13 +60,10 @@ if __name__ == '__main__':
         with open(args.output, 'a') as output_fp:
             for entity in tqdm(entities):
                 entity = preprocess_entity(entity)
-                prompt = construct_prompt(
-                    entity=entity,
-                    type_=args.type,
-                    lang=args.lang
-                )
                 data = strategy.get_data(
-                    input_text=prompt
+                    entity=entity,
+                    type=args.type,
+                    lang=args.lang
                 )
                 jobs_desc.append({
                     'entity': entity,
@@ -82,13 +79,10 @@ if __name__ == '__main__':
         with open(args.output, "a") as output_fp:
             for entity in tqdm(entities):
                 entity = preprocess_entity(entity)
-                prompt = construct_prompt(
-                    entity=entity,
-                    type_=args.type,
-                    lang=args.lang
-                )
                 data = strategy.get_data(
-                    input_text=prompt
+                    entity=entity,
+                    type=args.type,
+                    lang=args.lang
                 )
                 skills_desc.append({
                     "entity": entity,

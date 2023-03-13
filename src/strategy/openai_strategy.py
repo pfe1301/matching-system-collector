@@ -1,3 +1,4 @@
+from strategy.utils import construct_prompt
 from .collection_strategy import CollectionStrategy
 import openai
 import time
@@ -21,7 +22,7 @@ class OpenaiStrategy(CollectionStrategy):
     def __init__(self) -> None:
         super().__init__()
 
-    def get_data(self, input_text: str, *args, **kwargs):
+    def get_data(self, entity: str, *args, **kwargs):
         """
             Implement `get_data` function responsible for data collection
             Parameters:
@@ -30,8 +31,13 @@ class OpenaiStrategy(CollectionStrategy):
             Returns:
                 data (string): the text response of the api
         """
-        super().get_data(input_text, *args, **kwargs)
-        return self.make_request(prompt=input_text)
+        super().get_data(entity, *args, **kwargs)
+        prompt = construct_prompt(
+            entity=entity,
+            type_=kwargs.get('type', 'job'),
+            lang=kwargs.get('lang', 'en')
+        )
+        return self.make_request(prompt=prompt)
 
     def make_request(self, prompt: str) -> str:
         """
