@@ -57,6 +57,8 @@ if __name__ == '__main__':
     logger.info("Loading entities descriptions")
     if args.type == 'job':
         jobs_desc = []
+        with open(args.output, 'w') as f:
+            f.write('[')
         for entity in tqdm(entities):
             entity = preprocess_entity(entity)
             data = strategy.get_data(
@@ -70,25 +72,31 @@ if __name__ == '__main__':
             })
             logger.info(f"Saving {entity} description")
             with open(args.output, 'a') as f:
-                f.write({'entity': entity,
-                         'description': data})
-
-
+                json.dump({'entity': entity,
+                            'description': data}, f)
+                f.write(',')
+        with open(args.output, 'a') as f:
+            f.write(']')
     else:
         # skills
         skills_desc = []
+        with open(args.output, 'w') as f:
+            f.write('[')
         for entity in tqdm(entities):
             entity = preprocess_entity(entity)
             data = strategy.get_data(
-                    entity=entity,
-                    type=args.type,
-                    lang=args.lang
-                )
+                entity=entity,
+                type=args.type,
+                lang=args.lang
+            )
             skills_desc.append({
-            "entity": entity,
-            'description': data
+                "entity": entity,
+                'description': data
             })
             logger.info(f"Saving {entity} description")
             with open(args.output, 'a') as f:
-                f.write({'entity': entity,
-                            'description': data})
+                json.dump({'entity': entity,
+                            'description': data}, f)
+                f.write(',')
+        with open(args.output, 'a') as f:
+            f.write(']')
