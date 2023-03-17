@@ -11,6 +11,11 @@ OpenAI provides a variety of natural language processing models that can be used
 WriteSonic is a platform that can generate SEO-friendly content.
 We interact with this paltform using their API.
 
+### DBPedia
+
+DBpedia is a large-scale, multilingual knowledge graph that extracts structured information from Wikipedia and makes it available in a machine-readable format.
+We obtain the URI of the entity from the DBpedia Lookup API. If a URI is found, we query the DBpedia SPARQL endpoint for the entity's description in the specified language.
+
 
 ### Repo organization
 
