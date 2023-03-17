@@ -105,7 +105,7 @@ if __name__ == '__main__':
                 'description': data
             })
             count += 1
-            logger.info(f"Saving {entity} description")
+            logger.info(f"Got description for {entity}")
             if count % args.chunk == 0:
                 save_data(descriptions, args.output, number_chunk)
                 descriptions = []
