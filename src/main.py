@@ -4,8 +4,16 @@ import logging
 # from api import get_data
 from utils import preprocess_entity, build_strategy
 from tqdm.auto import tqdm
+import os
 
 logger = logging.getLogger(__name__)
+
+api_key = os.getenv("OPENAI_API_KEY")
+
+
+def save_data(data, output, chunk_number):
+    with open(output + str(chunk_number) + '.json', "w") as output_file:
+        json.dump(data, output_file)
 
 
 if __name__ == '__main__':
@@ -16,8 +24,8 @@ if __name__ == '__main__':
     parser.add_argument(
         "-o",
         "--output",
-        default="../store/output.json",
-        help="Location of the output"
+        default="../store/output",
+        help="Location of the output (default: ../store/output) (without extension))"
     )
     parser.add_argument(
         "-l",
@@ -40,6 +48,29 @@ if __name__ == '__main__':
         help="The strategy of data collection (data source)",
     )
 
+    parser.add_argument(
+        "-c",
+        "--chunk",
+        default=100,
+        help="The number of entities to store in a single file",
+    )
+
+    # start index
+    parser.add_argument(
+        "-si",
+        "--startindex",
+        default=0,
+        help="The index of the entity to start from",
+    )
+
+    # end index
+    parser.add_argument(
+        "-ei",
+        "--endindex",
+        default=-1,
+        help="The index of the entity to end at",
+    )
+
     args = parser.parse_args()
 
     # Configure the logger
@@ -55,48 +86,36 @@ if __name__ == '__main__':
         entities = entities_file.readlines()
 
     logger.info("Loading entities descriptions")
-    if args.type == 'job':
-        jobs_desc = []
-        with open(args.output, 'w') as f:
-            f.write('[')
-        for entity in tqdm(entities):
+
+    descriptions = []
+    count = 0
+    number_chunk = 0
+    if args.endindex == -1:
+        args.endindex = len(entities)
+    for entity in tqdm(entities[int(args.startindex):int(args.endindex)]):
+        try:
             entity = preprocess_entity(entity)
             data = strategy.get_data(
                 entity=entity,
                 type=args.type,
                 lang=args.lang
             )
-            jobs_desc.append({
+            descriptions.append({
                 "entity": entity,
                 'description': data
             })
+            count += 1
             logger.info(f"Saving {entity} description")
-            with open(args.output, 'a') as f:
-                json.dump({'entity': entity,
-                            'description': data}, f)
-                f.write(',')
-        with open(args.output, 'a') as f:
-            f.write(']')
-    else:
-        # skills
-        skills_desc = []
-        with open(args.output, 'w') as f:
-            f.write('[')
-        for entity in tqdm(entities):
-            entity = preprocess_entity(entity)
-            data = strategy.get_data(
-                entity=entity,
-                type=args.type,
-                lang=args.lang
-            )
-            skills_desc.append({
-                "entity": entity,
-                'description': data
-            })
-            logger.info(f"Saving {entity} description")
-            with open(args.output, 'a') as f:
-                json.dump({'entity': entity,
-                            'description': data}, f)
-                f.write(',')
-        with open(args.output, 'a') as f:
-            f.write(']')
+            if count % args.chunk == 0:
+                save_data(descriptions, args.output, number_chunk)
+                descriptions = []
+                number_chunk += 1
+        except Exception as e:
+            logger.error(e)
+            logger.info("Stopped at entity: " + entity + " with index: " + str(count))
+            save_data(descriptions, args.output, number_chunk)
+            descriptions = []
+            raise e
+
+    if len(descriptions) > 0:
+        save_data(descriptions, args.output, number_chunk)
