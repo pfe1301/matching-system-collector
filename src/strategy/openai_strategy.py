@@ -39,7 +39,7 @@ class OpenaiStrategy(CollectionStrategy):
         )
         return self.make_request(prompt=prompt)
 
-    def make_request(self, prompt: str) -> str:
+    def make_request(self, prompt: str, TRY_AGAIN=2) -> str:
         """
             Make actual request to the API
             Parameters:
@@ -62,13 +62,11 @@ class OpenaiStrategy(CollectionStrategy):
             )
             return response.choices[0].text.strip()
         except:
-            time.sleep(6000)
-            response = openai.Completion.create(
-                engine="text-davinci-003",
-                prompt=prompt,
-                max_tokens=1000,
-                n=1,
-                stop=None,
-                temperature=0.5,
-            )
-            return response.choices[0].text.strip()
+            if TRY_AGAIN == 0:
+                raise Exception("API request failed")
+            else:
+                print(TRY_AGAIN, "tries left")
+                TRY_AGAIN -= 1
+                time.sleep(6)
+                print("Trying again")
+                return self.make_request(prompt=prompt, TRY_AGAIN=TRY_AGAIN)
