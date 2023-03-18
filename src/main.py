@@ -11,8 +11,9 @@ logger = logging.getLogger(__name__)
 api_key = os.getenv("OPENAI_API_KEY")
 
 
-def save_data(data, output, chunk_number):
-    with open(output + str(chunk_number) + '.json', "w") as output_file:
+def save_data(data, output, start_index):
+    file_name = output + start_index + '_' + str(start_index + len(data)) + '.json'
+    with open(file_name, "w") as output_file:
         json.dump(data, output_file)
 
 
@@ -107,15 +108,16 @@ if __name__ == '__main__':
             count += 1
             logger.info(f"Got description for {entity}")
             if count % args.chunk == 0:
-                save_data(descriptions, args.output, number_chunk)
+                save_data(descriptions, args.output, args.start_index + number_chunk * args.chunk + 1)
                 descriptions = []
                 number_chunk += 1
+                
         except Exception as e:
             logger.error(e)
             logger.info("Stopped at entity: " + entity + " with index: " + str(count))
-            save_data(descriptions, args.output, number_chunk)
+            save_data(descriptions, args.output, args.start_index + number_chunk * args.chunk + 1)
             descriptions = []
             raise e
 
     if len(descriptions) > 0:
-        save_data(descriptions, args.output, number_chunk)
+        save_data(descriptions, args.output, args.start_index + number_chunk * args.chunk + 1)
