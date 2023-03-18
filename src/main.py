@@ -12,7 +12,8 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 
 def save_data(data, output, start_index):
-    file_name = output + str(start_index) + '_' + str(start_index + len(data)) + '.json'
+    file_name = output + str(start_index) + '_' + \
+        str(start_index + len(data) - 1) + '.json'
     with open(file_name, "w") as output_file:
         json.dump(data, output_file)
 
@@ -108,16 +109,20 @@ if __name__ == '__main__':
             count += 1
             logger.info(f"Got description for {entity}")
             if count % args.chunk == 0:
-                save_data(descriptions, args.output, args.startindex + number_chunk * args.chunk + 1)
+                save_data(descriptions, args.output,
+                          args.startindex + number_chunk * args.chunk + 1)
                 descriptions = []
                 number_chunk += 1
-                
+
         except Exception as e:
             logger.error(e)
-            logger.info("Stopped at entity: " + entity + " with index: " + str(count))
-            save_data(descriptions, args.output, args.startindex + number_chunk * args.chunk + 1)
+            logger.info("Stopped at entity: " + entity +
+                        " with index: " + str(count))
+            save_data(descriptions, args.output, args.startindex +
+                      number_chunk * args.chunk + 1)
             descriptions = []
             exit(1)
 
     if len(descriptions) > 0:
-        save_data(descriptions, args.output, args.startindex + number_chunk * args.chunk + 1)
+        save_data(descriptions, args.output, args.startindex +
+                  number_chunk * args.chunk + 1)
